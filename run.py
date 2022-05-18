@@ -9,7 +9,7 @@ class Katello:
             file = open(f'{self.fullpath}/products.yaml', 'r').read()
             print(file)
         except Exception as err:
-            return str(err)
+            print(str(err))
 
     def __init__(self):
         self.fullpath = os.path.abspath(os.path.dirname(__file__))
