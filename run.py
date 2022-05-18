@@ -17,7 +17,7 @@ class Katello:
     def load_conf(self):
         ''' load configs '''
         try:
-            config = configparser.configParser()
+            config = configparser.ConfigParser()
             config.read(f'{self.fullpath}/config.ini')
             environment = config['environment']
             return {
