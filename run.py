@@ -44,8 +44,8 @@ class Katello:
                     info_repos.append({
                         'id' : data['ID'],
                         'name' : data['Name'],
-                        'sync_status' : self.analyse_sync_date(moment=data['Sync']['last_sync']),
-                        'last_sync' : data['Sync']['Last Sync Date']
+                        'last_sync' : self.analyse_sync_date(moment=data['Sync']['Last Sync Date']),
+                        'sync_status' : data['Sync']['Status']
                     })
             return info_repos
         except Exception as err:
