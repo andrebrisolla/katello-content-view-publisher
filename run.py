@@ -70,7 +70,7 @@ class Katello:
         except Exception as err:
             raise str(err)
     
-    def get_content_view_info(self, **kwargs):
+    def get_content_view_info(self):
         try:
             cmd = ['hammer', 
                     '--output', 'json', 
@@ -90,7 +90,7 @@ class Katello:
             yml = self.load_yaml()
             data = yml[self.env]
             products = data['products']
-            content_view_info = self.get_content_view_info(content_view=content_view)    
+            content_view_info = self.get_content_view_info()    
             for product in products:
                 #product_name = product['product_name']
                 content_view = product['content_view']
