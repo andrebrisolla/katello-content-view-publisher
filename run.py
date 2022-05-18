@@ -50,7 +50,7 @@ class Katello:
         except Exception as err:
             raise str(err)
 
-    def parse_repos(self, **kwargs):
+    def get_repo_sync_info(self, **kwargs):
         try:
             ids = kwargs['repositories']
             info_repos = []
@@ -91,8 +91,10 @@ class Katello:
             data = yml[self.env]
             content_views = data['content_views']
             content_view_info = self.get_content_view_info()
-            filter_cvs = [ x for x in content_view_info if x['Name'] in content_views ]
-            print(json.dumps(filter_cvs))
+            cvs = [ x for x in content_view_info if x['Name'] in content_views ]
+            for cv in cvs:
+                ids = cv['Repository IDs']
+                print(ids)
             
                 #repos = self.get_product_repos(product=product_name)
                 #repos_info = self.parse_repos(repositories=repos)
