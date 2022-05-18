@@ -90,7 +90,9 @@ class Katello:
             yml = self.load_yaml()
             data = yml[self.env]
             products = data['products']
-            content_view_info = self.get_content_view_info()    
+            content_view_info = self.get_content_view_info()
+            print(content_view_info)
+            sys.exit(0)    
             for product in products:
                 #product_name = product['product_name']
                 content_view = product['content_view']
