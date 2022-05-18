@@ -92,7 +92,7 @@ class Katello:
             content_views = data['content_views']
             content_view_info = self.get_content_view_info()
             filter_cvs = [ x for x in content_view_info if x['Name'] in content_views ]
-            print(filter_cvs)
+            print(json.dumps(filter_cvs))
             
                 #repos = self.get_product_repos(product=product_name)
                 #repos_info = self.parse_repos(repositories=repos)
