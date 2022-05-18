@@ -1,4 +1,4 @@
 nprod:
   products:
-    - product_name: zabbix-6-test
+    - product_name: Oracle Linux 8
       content_view: zabbix-6-test

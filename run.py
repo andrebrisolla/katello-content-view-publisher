@@ -57,13 +57,13 @@ class Katello:
         except Exception as err:
             raise str(err)
         
-
     def verify(self):
         try:
             yml = self.load_yaml()
             data = yml[self.env]
             products = data['products']
             for product in products:
+                print(product)
                 product_name = product['product_name']
                 content_view = product['content_view']
                 repos = self.get_product_repos(product=product_name)
