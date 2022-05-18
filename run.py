@@ -6,7 +6,7 @@ class Katello:
 
     def load_yaml_data(self):
         try:
-            file = open(f'{self.fullpath}/products.yaml', 'r').read()
+            file = open(f'{self.fullpath}/products.yml', 'r').read()
             print(file)
         except Exception as err:
             print(str(err))
