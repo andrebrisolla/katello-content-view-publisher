@@ -92,14 +92,16 @@ class Katello:
             content_views = data['content_views']
             content_view_info = self.get_content_view_info()
             cvs = [ x for x in content_view_info if x['Name'] in content_views ]
+            cv_updated = []
             for cv in cvs:
                 ids = cv['Repository IDs']
-                print(ids)
-            
+                repos_info = self.get_content_view_info(repositories=repos)
+                cv['sync_info'] = repos_info
+                cv_updated.append(cv)
                 #repos = self.get_product_repos(product=product_name)
-                #repos_info = self.parse_repos(repositories=repos)
+                #repos_info = self.get_content_view_info(repositories=repos)
                 #repo_parsed_data.append(repos_info)
-                
+            print(cv_updated)
                 
         except Exception as err:
             raise str(err)
