@@ -91,9 +91,9 @@ class Katello:
             data = yml[self.env]
             content_views = data['content_views']
             content_view_info = self.get_content_view_info()
-            for cv in content_views:
+            for cv in content_view_info:
                 print(cv)
-
+            
                 #repos = self.get_product_repos(product=product_name)
                 #repos_info = self.parse_repos(repositories=repos)
                 #repo_parsed_data.append(repos_info)
