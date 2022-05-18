@@ -101,7 +101,7 @@ class Katello:
                 #repos = self.get_product_repos(product=product_name)
                 #repos_info = self.get_content_view_info(repositories=repos)
                 #repo_parsed_data.append(repos_info)
-            print(cv_updated)
+            print(json.dumps(cv_updated))
                 
         except Exception as err:
             raise str(err)
