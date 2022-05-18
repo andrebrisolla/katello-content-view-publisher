@@ -79,23 +79,14 @@ class Katello:
                 repos_info = self.get_repo_sync_info(repositories=ids)
                 cv['sync_info'] = repos_info
                 cv_updated.append(cv)
-                #repos = self.get_product_repos(product=product_name)
-                #repos_info = self.get_content_view_info(repositories=repos)
-                #repo_parsed_data.append(repos_info)
             print(json.dumps(cv_updated))
                 
         except Exception as err:
             raise str(err)
     
-
-
-
     def create(self):
         print('cria')
         
-
-
-
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="Create a Katello Content View")
