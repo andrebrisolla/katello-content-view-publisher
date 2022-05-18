@@ -19,7 +19,8 @@ class Katello:
         try:
             config = configparser.ConfigParser()
             config.read(f'{self.fullpath}/config.ini')
-            environment = config['environment']
+            c = config['config']
+            environment = c['environment']
             return {
                 'environment' : environment
             }
