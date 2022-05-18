@@ -95,7 +95,7 @@ class Katello:
             cv_updated = []
             for cv in cvs:
                 ids = cv['Repository IDs']
-                repos_info = self.get_content_view_info(repositories=repos)
+                repos_info = self.get_content_view_info(repositories=ids)
                 cv['sync_info'] = repos_info
                 cv_updated.append(cv)
                 #repos = self.get_product_repos(product=product_name)
