@@ -58,7 +58,6 @@ class Katello:
                         'sync_status' : data['Sync']['Status'],
                         'last_sync' : data['Sync']['Last Sync Date']
                     })
-                    #info_repos.append(data)
             return info_repos
         except Exception as err:
             raise str(err)
@@ -68,12 +67,14 @@ class Katello:
             yml = self.load_yaml()
             data = yml[self.env]
             products = data['products']
+            repo_parsed_data = []
             for product in products:
                 product_name = product['product_name']
                 content_view = product['content_view']
                 repos = self.get_product_repos(product=product_name)
                 repos_info = self.parse_repos(repositories=repos)
-                print(json.dumps(repos_info))
+                repo_parsed_data.append(repos_info)
+            print(repo_parsed_data)
         except Exception as err:
             raise str(err)
     
