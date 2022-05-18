@@ -39,9 +39,24 @@ class Katello:
                 return id_repos
             else:
                 raise str(res.stderr)
-
         except Exception as err:
             raise str(err)
+
+    def parse_repos(self, **kwargs):
+        try:
+            ids = kwargs['repositories']
+            info_repos = []
+            for id in ids:
+                cmd_get_repos_info = ['hammer', '--output', 'json', 'repository', 'info', '--id', f'{id}']
+                res = sb.run(cmd_get_repos_info, stdout=sb.PIPE, stderr=sb.PIPE)
+                if res.returncode == 0:
+                    ret = res.stdout.decode('utf-8')
+                    data = json.loads(ret)
+                    info_repos.append(data)
+            return info_repos
+        except Exception as err:
+            raise str(err)
+        
 
     def verify(self):
         try:
@@ -52,7 +67,8 @@ class Katello:
                 product_name = product['product_name']
                 content_view = product['content_view']
                 repos = self.get_product_repos(product=product_name)
-                print(repos)
+                repos_info = self.parse_repos(repositories=repos)
+            print(json.dumps(repos_info))
         except Exception as err:
             raise str(err)
     
