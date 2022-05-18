@@ -61,7 +61,25 @@ class Katello:
             return info_repos
         except Exception as err:
             raise str(err)
-        
+    
+    def parse_content_view(self, **kwargs):
+        try:
+            cmd = ['hammer', 
+                    '--output', 'json', 
+                    'content-view', 'list', 
+                    '--organization-id', '1']
+            res = sb.run(cmd, stdout=sb.PIPE, stderr=sb.PIPE)
+            if res.returncode == 0:
+                ret = res.stdout.decode('utf-8')
+                data = json.loads(ret)
+                print(data)
+            #
+            content_view = kwargs['content_view']
+
+        except Exception as err:
+            raise str(err)
+
+
     def verify(self):
         try:
             yml = self.load_yaml()
@@ -69,12 +87,13 @@ class Katello:
             products = data['products']
             repo_parsed_data = []
             for product in products:
-                product_name = product['product_name']
+                #product_name = product['product_name']
                 content_view = product['content_view']
-                repos = self.get_product_repos(product=product_name)
-                repos_info = self.parse_repos(repositories=repos)
-                repo_parsed_data.append(repos_info)
-            print(repo_parsed_data)
+                #repos = self.get_product_repos(product=product_name)
+                #repos_info = self.parse_repos(repositories=repos)
+                #repo_parsed_data.append(repos_info)
+                content_view = self.parse_content_view(content_view=content_view)    
+                print(content_view)
         except Exception as err:
             raise str(err)
     
