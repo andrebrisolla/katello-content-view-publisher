@@ -72,7 +72,7 @@ class Katello:
             if res.returncode == 0:
                 ret = res.stdout.decode('utf-8')
                 data = json.loads(ret)
-                print(data)
+                return data
             #
             content_view = kwargs['content_view']
 
