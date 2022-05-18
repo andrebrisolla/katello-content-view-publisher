@@ -52,6 +52,8 @@ class Katello:
                 if res.returncode == 0:
                     ret = res.stdout.decode('utf-8')
                     data = json.loads(ret)
+                    for d in data:
+                        print(d)
                     info_repos.append(data)
             return info_repos
         except Exception as err:
@@ -63,7 +65,6 @@ class Katello:
             data = yml[self.env]
             products = data['products']
             for product in products:
-                print(product)
                 product_name = product['product_name']
                 content_view = product['content_view']
                 repos = self.get_product_repos(product=product_name)
