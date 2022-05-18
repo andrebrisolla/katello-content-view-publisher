@@ -42,6 +42,14 @@ class Katello:
         except Exception as err:
             raise str(err)
 
+    def analyse_sync_date(self, **kwargs):
+        try:
+            moment = kwargs['moment']
+            parsed = moment.replace('about','')
+            return parsed
+        except Exception as err:
+            raise str(err)
+
     def parse_repos(self, **kwargs):
         try:
             ids = kwargs['repositories']
@@ -55,14 +63,14 @@ class Katello:
                     info_repos.append({
                         'id' : data['ID'],
                         'name' : data['Name'],
-                        'sync_status' : data['Sync']['Status'],
+                        'sync_status' : self.analyse_sync_date(moment=data['Sync']['Status']),
                         'last_sync' : data['Sync']['Last Sync Date']
                     })
             return info_repos
         except Exception as err:
             raise str(err)
     
-    def parse_content_view(self, **kwargs):
+    def get_content_view_info(self, **kwargs):
         try:
             cmd = ['hammer', 
                     '--output', 'json', 
@@ -73,9 +81,6 @@ class Katello:
                 ret = res.stdout.decode('utf-8')
                 data = json.loads(ret)
                 return data
-            #
-            content_view = kwargs['content_view']
-
         except Exception as err:
             raise str(err)
 
@@ -85,14 +90,15 @@ class Katello:
             yml = self.load_yaml()
             data = yml[self.env]
             products = data['products']
-            repo_parsed_data = []
+            content_view_info = self.get_content_view_info(content_view=content_view)    
             for product in products:
                 #product_name = product['product_name']
                 content_view = product['content_view']
+
                 #repos = self.get_product_repos(product=product_name)
                 #repos_info = self.parse_repos(repositories=repos)
                 #repo_parsed_data.append(repos_info)
-                content_view = self.parse_content_view(content_view=content_view)    
+                
                 print(content_view)
         except Exception as err:
             raise str(err)
