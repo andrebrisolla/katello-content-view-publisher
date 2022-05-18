@@ -1,0 +1,4 @@
+nprod:
+  products:
+    zabbix-6-test:
+      content-view: zabbix-6-test
