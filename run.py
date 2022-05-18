@@ -23,25 +23,6 @@ class Katello:
         self.products = self.load_yaml()
         self.env = kwargs['env']
 
-    def get_product_repos(self, **kwargs):
-        try:
-            product = kwargs['product']
-            cmd_get_repos = ['hammer', 
-                    '--output', 'json', 
-                    'repository', 'list', 
-                    '--organization-id', '1', 
-                    '--product', f'{product}']
-            res = sb.run(cmd_get_repos, stdout=sb.PIPE, stderr=sb.PIPE)
-            if res.returncode == 0:
-                json_data = res.stdout.decode('utf-8')
-                data = json.loads(json_data)
-                id_repos = [ x['Id'] for x in data ]
-                return id_repos
-            else:
-                raise str(res.stderr)
-        except Exception as err:
-            raise str(err)
-
     def analyse_sync_date(self, **kwargs):
         try:
             moment = kwargs['moment']
@@ -63,7 +44,7 @@ class Katello:
                     info_repos.append({
                         'id' : data['ID'],
                         'name' : data['Name'],
-                        'sync_status' : self.analyse_sync_date(moment=data['Sync']['Status']),
+                        'sync_status' : self.analyse_sync_date(moment=data['Sync']['last_sync']),
                         'last_sync' : data['Sync']['Last Sync Date']
                     })
             return info_repos
