@@ -52,9 +52,13 @@ class Katello:
                 if res.returncode == 0:
                     ret = res.stdout.decode('utf-8')
                     data = json.loads(ret)
-                    for d in data:
-                        print(d)
-                    info_repos.append(data)
+                    info_repos.append({
+                        'id' : data['ID'],
+                        'name' : data['Name'],
+                        'sync_status' : data['Sync']['Status'],
+                        'last_sync' : data['Sync']['Last Sync Date']
+                    })
+                    #info_repos.append(data)
             return info_repos
         except Exception as err:
             raise str(err)
