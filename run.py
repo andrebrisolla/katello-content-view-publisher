@@ -68,7 +68,7 @@ class Katello:
                 content_view = product['content_view']
                 repos = self.get_product_repos(product=product_name)
                 repos_info = self.parse_repos(repositories=repos)
-            print(json.dumps(repos_info))
+                print(json.dumps(repos_info))
         except Exception as err:
             raise str(err)
     
