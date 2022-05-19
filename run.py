@@ -146,7 +146,7 @@ class Katello:
                     if self.publish_new_version:
                         self.publish_a_new_content_view(id=cv_id)
                 else:
-                    print(f' - Content View "{cv_name}" don\'t needs to be published! ')
+                    print(f' - Content View "{cv_name}" doesn\'t needs to be published! ')
         except Exception as err:
             raise str(err)
 
