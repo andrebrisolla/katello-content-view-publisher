@@ -26,7 +26,7 @@ class Katello:
     def analyse_sync_date(self, **kwargs):
         try:
             moment = kwargs['moment']
-            parsed = moment.replace('about','')
+            parsed = moment.replace('about','').rstrip()
             return parsed
         except Exception as err:
             raise str(err)
