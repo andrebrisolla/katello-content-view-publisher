@@ -6,6 +6,8 @@ import sys
 import argparse
 import subprocess as sb
 import json
+from datetime import datetime, timedelta
+import re
 
 class Katello:
 
@@ -26,8 +28,9 @@ class Katello:
     def analyse_sync_date(self, **kwargs):
         try:
             moment = kwargs['moment']
-            parsed = moment.replace('about','').rstrip()
-            return parsed
+            filter_1 = moment.replace('about','')
+            filter_2 = filter_1.replace('2','')
+            return 'ok'
         except Exception as err:
             raise str(err)
 
@@ -65,9 +68,32 @@ class Katello:
         except Exception as err:
             raise str(err)
 
+    def analyse_date(self, **kwargs):
+        try:
+            data = kwargs['data']
+            ''' START DEV'''
+            #data = json.loads(open('teste.json','r').read())
+            
+            ''' END DEV '''
+            for cv in data:
+                cv_name = cv['Name']
+                cv_id = cv['Content View ID']
+                cv_last_published = cv['Last Published'].split()
+                # convert date str to date object
+                date_str = f'{cv_last_published[0]} {cv_last_published[1]}'
+                date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+                print(f'{cv_id} {cv_name} {date_obj}')
+                for sync_info in cv['sync_info']:
+                    print(sync_info)
+            sys.exit()
+
+        except Exception as err:
+            raise str(err)
+
 
     def verify(self):
         try:
+            ##self.analyse_date()
             yml = self.load_yaml()
             data = yml[self.env]
             content_views = data['content_views']
@@ -79,9 +105,9 @@ class Katello:
                 repos_info = self.get_repo_sync_info(repositories=ids)
                 cv['sync_info'] = repos_info
                 cv_updated.append(cv)
-            print(json.dumps(cv_updated))
+            self.analyse_date(data=json.dumps(cv_updated))
         except Exception as err:
-            raise str(err)
+            raise str(  err)
     
     def create(self):
         print('cria')
