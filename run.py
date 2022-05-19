@@ -10,9 +10,14 @@ from datetime import datetime, timedelta
 import re
 
 class Katello:
+    
+    def __init__(self, **kwargs):
+        self.fullpath = os.path.abspath(os.path.dirname(__file__))
+        self.products = self.load_yaml()
+        self.env = kwargs['env']
+        self.publish_new_version=kwargs['publish_new_version']
 
     def load_yaml(self):
-        ''' load yaml data '''
         try:
             file_data = open(f'{self.fullpath}/products.yml', 'r').read()
             yml = yaml.safe_load(file_data)
@@ -20,17 +25,25 @@ class Katello:
         except Exception as err:
             raise str(err)
     
-    def __init__(self, **kwargs):
-        self.fullpath = os.path.abspath(os.path.dirname(__file__))
-        self.products = self.load_yaml()
-        self.env = kwargs['env']
-
     def analyse_sync_date(self, **kwargs):
         try:
             moment = kwargs['moment']
             filter_1 = moment.replace('about','')
-            filter_2 = filter_1.replace('2','')
-            return 'ok'
+            filter_2 = re.sub('^\s+','', filter_1)
+            time_key=''
+            if re.search('day', filter_2):
+              time_key='days'
+              time_val = int(filter_2.split()[0])*24
+            elif re.search('hour', filter_2):
+              time_key='hours'
+              time_val = int(filter_2.split()[0])
+            if re.search('month', filter_2):
+              time_key='days'
+              time_val = (30*int(filter_2.split()[0])*24)
+            td = timedelta(hours=time_val)
+            now = datetime.now()
+            dt = now - td
+            return dt
         except Exception as err:
             raise str(err)
 
@@ -68,32 +81,41 @@ class Katello:
         except Exception as err:
             raise str(err)
 
+    def publish_a_new_content_view(self, **kwargs):
+      try:
+        id = kwargs['id']
+        cmd = ['hammer', 'content-view', 'publish', '--id', f'{id}', '--async']
+        res = sb.run(cmd, stdout=sb.PIPE, stderr=sb.PIPE)
+        if res.returncode == 0:
+          ret = res.stdout.decode('utf-8')
+        else:
+          ret = res.stderr.decode('utf-8')
+        print(f'   {ret}')
+      except Exception as err:
+        raise str(err)
+
     def analyse_date(self, **kwargs):
         try:
             data = kwargs['data']
-            ''' START DEV'''
-            #data = json.loads(open('teste.json','r').read())
-            
-            ''' END DEV '''
             for cv in data:
                 cv_name = cv['Name']
                 cv_id = cv['Content View ID']
                 cv_last_published = cv['Last Published'].split()
-                # convert date str to date object
                 date_str = f'{cv_last_published[0]} {cv_last_published[1]}'
                 date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
-                print(f'{cv_id} {cv_name} {date_obj}')
-                for sync_info in cv['sync_info']:
-                    print(sync_info)
-            sys.exit()
-
+                compare_cv_repos = [ date_obj > x['last_sync'] for x in cv['sync_info'] ]
+                cv_needs_to_be_published = False in compare_cv_repos
+                if cv_needs_to_be_published:
+                  print(f' - Content View "{cv_name}" needs to be published! ')
+                  if self.publish_new_version:
+                    self.publish_a_new_content_view(id=cv_id)
+                else:
+                  print(f' - Content View "{cv_name}" don\'t needs to be published! ')
         except Exception as err:
             raise str(err)
 
-
     def verify(self):
         try:
-            ##self.analyse_date()
             yml = self.load_yaml()
             data = yml[self.env]
             content_views = data['content_views']
@@ -105,27 +127,17 @@ class Katello:
                 repos_info = self.get_repo_sync_info(repositories=ids)
                 cv['sync_info'] = repos_info
                 cv_updated.append(cv)
-            self.analyse_date(data=json.dumps(cv_updated))
+            self.analyse_date(data=cv_updated)
         except Exception as err:
             raise str(  err)
     
-    def create(self):
-        print('cria')
-        
-
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description="Create a Katello Content View")
-    parse.add_argument('--verify', help='Verify if necessary a new version of a Content View.', action='store_true' )
-    parse.add_argument('--create', help='Create a new version of a Content View if necessary.', action='store_true')
+    parse.add_argument('--verify', help='Verify if necessary a new version of a Content View.', action='store_true', required=True )
+    parse.add_argument('--publish', help='Create a new version of a Content View if necessary.', action='store_true')
     parse.add_argument('--env', help='Katello environment [nprod|prod].', required=True, choices=['nprod','prod'])
     arguments = parse.parse_args()
     args = vars(arguments)
-    kt = Katello(env=args['env'])
-    if (args['verify'] and args['create']) or (not args['verify'] and not args['create']):
-        print('\nError: You need to specify one parameter.\n')
-        parse.print_help()
-        sys.exit(1)
-    elif args['verify']:
+    kt = Katello(env=args['env'],publish_new_version=args['publish'])
+    if args['verify']:
         kt.verify()
-    elif args['create']:
-        kt.create()
