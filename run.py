@@ -113,16 +113,16 @@ class Katello:
             It receives a Content View ID and publish a new Version of it.
         '''
         try:
-        id = kwargs['id']
-        cmd = ['hammer', 'content-view', 'publish', '--id', f'{id}', '--async']
-        res = sb.run(cmd, stdout=sb.PIPE, stderr=sb.PIPE)
-        if res.returncode == 0:
-            ret = res.stdout.decode('utf-8')
-        else:
-            ret = res.stderr.decode('utf-8')
-        print(f'   {ret}')
+            id = kwargs['id']
+            cmd = ['hammer', 'content-view', 'publish', '--id', f'{id}', '--async']
+            res = sb.run(cmd, stdout=sb.PIPE, stderr=sb.PIPE)
+            if res.returncode == 0:
+                ret = res.stdout.decode('utf-8')
+            else:
+                ret = res.stderr.decode('utf-8')
+            print(f'   {ret}')
         except Exception as err:
-        raise str(err)
+            raise str(err)
 
     def analyse_date(self, **kwargs):
         '''
