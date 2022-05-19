@@ -80,7 +80,6 @@ class Katello:
                 cv['sync_info'] = repos_info
                 cv_updated.append(cv)
             print(json.dumps(cv_updated))
-                
         except Exception as err:
             raise str(err)
     

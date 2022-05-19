@@ -2,3 +2,4 @@ nprod:
   content_views:
     - OracleLinux8 Content View
     - zabbix-6-test
+    - Centos8 ContentView
